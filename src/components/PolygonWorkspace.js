@@ -2,9 +2,15 @@ class PolygonWorkspace extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
+        this.polygons = [];
     }
 
     connectedCallback() {
+        this.render();
+    }
+
+    setPolygons(polygons) {
+        this.polygons = polygons;
         this.render();
     }
 
