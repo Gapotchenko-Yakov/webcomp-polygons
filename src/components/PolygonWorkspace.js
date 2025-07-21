@@ -19,30 +19,62 @@ class PolygonWorkspace extends HTMLElement {
         this.shadow.innerHTML = `
       <style>
         :host {
-          display: block;
-          height: 400px;
-          border: 1px solid #aaa;
-          user-select: none;
-          overflow: hidden;
-          position: relative;
+            display: block;
+            height: 400px;
+            border: 1px solid #444;
+            user-select: none;
+            overflow: hidden;
+            position: relative;
+            background: var(--bg-workspace);
         }
+
         svg {
-          width: 100%; height: 100%;
-          background: #f0f0f0;
-          cursor: grab;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-workspace);
+            cursor: grab;
         }
+
         svg:active {
-          cursor: grabbing;
+            cursor: grabbing;
         }
+
+        polygon {
+            fill: var(--polygon-fill);
+            stroke: var(--polygon-stroke);
+            stroke-width: 2;
+            cursor: grab;
+        }
+
         .scale-line {
-          stroke: #333;
-          stroke-width: 1;
+            stroke: var(--axis-color);
+            stroke-width: 1;
         }
+
         .scale-text {
-          font-size: 10px;
-          fill: #333;
+            font-size: 10px;
+            fill: var(--text-color);
         }
-      </style>
+
+        /* Размещение осей слева и снизу */
+        .axis-x {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 20px;
+            width: 100%;
+            background: transparent;
+        }
+
+        .axis-y {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 40px;
+            height: 100%;
+            background: transparent;
+        }
+        </style>
       <svg>
         <g id="scale"></g>
         <g id="content" transform="translate(${this.offsetX}, ${this.offsetY}) scale(${this.scale})"></g>

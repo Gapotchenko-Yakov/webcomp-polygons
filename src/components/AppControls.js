@@ -6,9 +6,25 @@ class AppControls extends HTMLElement {
 
     connectedCallback() {
         this.shadowRoot.innerHTML = `
-      <style>
-        button { margin-right: 8px; }
-      </style>
+    <style>
+    :host {
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    button {
+        margin-right: 8px;
+        background: #222;
+        color: var(--text-color);
+        border: 1px solid #444;
+        padding: 5px 10px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background: #333;
+    }
+    </style>
       <button id="create">Создать</button>
       <button id="save">Сохранить</button>
       <button id="reset">Сбросить</button>
