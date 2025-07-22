@@ -5,8 +5,45 @@ class PolygonBuffer extends HTMLElement {
         this.polygons = [];
     }
 
+    setPolygons(polygons) {
+        this.polygons = polygons;
+    }
+
+    getPolygons() {
+        return this.polygons;
+    }
+
     connectedCallback() {
         this.render();
+        this.setAttribute('data-area', 'buffer');
+
+        this.shadowRoot.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        });
+
+        this.shadowRoot.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const poly = JSON.parse(e.dataTransfer.getData('application/json'));
+            const from = e.dataTransfer.getData('from');
+            const to = this.getAttribute('data-area');
+
+            // Координаты мыши — для позиционирования
+            const rect = this.shadowRoot.querySelector('.polygon-container').getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            // Добавляем координаты в объект полигона
+            poly.x = x;
+            poly.y = y;
+
+            this.dispatchEvent(new CustomEvent('polygon-dropped', {
+                bubbles: true,
+                composed: true,
+                detail: { polygon: poly, from, to }
+            }));
+        });
+
     }
 
     setPolygons(polygons) {
@@ -82,24 +119,14 @@ class PolygonBuffer extends HTMLElement {
 
             wrapper.addEventListener('dragstart', (e) => {
                 const id = wrapper.getAttribute('data-id');
-                const polyData = this.polygons.find(p => p.id === id);
+                const poly = this.polygons.find(p => p.id === id);
                 console.log('✅ dragstart for polygon', id);
-                e.dataTransfer.setData('application/json', JSON.stringify(polyData));
+                e.dataTransfer.setData('application/json', JSON.stringify(poly));
                 e.dataTransfer.effectAllowed = 'move';
-
-                const dragIcon = document.createElement('canvas');
-                dragIcon.width = 20;
-                dragIcon.height = 20;
-                const ctx = dragIcon.getContext('2d');
-                ctx.fillStyle = 'rgba(128,0,0,0.6)';
-                ctx.beginPath();
-                ctx.moveTo(10, 0);
-                ctx.lineTo(20, 20);
-                ctx.lineTo(0, 20);
-                ctx.closePath();
-                ctx.fill();
-                e.dataTransfer.setDragImage(dragIcon, 10, 10);
+                // Откуда тащим
+                e.dataTransfer.setData('from', this.getAttribute('data-area'));
             });
+
         });
     }
 

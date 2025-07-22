@@ -42,16 +42,38 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-workspace.addEventListener('polygon-dropped', (e) => {
-    const droppedPolygon = e.detail;
+// workspace.addEventListener('polygon-dropped', (e) => {
+//     const droppedPolygon = e.detail;
 
-    // Удаляем из буфера
-    const bufferPolygons = buffer.getPolygons().filter(p => p.id !== droppedPolygon.id);
-    buffer.setPolygons(bufferPolygons);
+//     const bufferPolygons = buffer.getPolygons().filter(p => p.id !== droppedPolygon.id);
+//     buffer.setPolygons(bufferPolygons);
 
-    // Добавляем в рабочую зону
-    workspace.setPolygons([...workspace.getPolygons(), droppedPolygon]);
+//     workspace.setPolygons([...workspace.getPolygons(), droppedPolygon]);
+// });
+
+document.addEventListener('polygon-dropped', (e) => {
+    const { polygon, from, to } = e.detail;
+
+    const fromElement = document.querySelector(`[data-area="${from}"]`);
+    const toElement = document.querySelector(`[data-area="${to}"]`);
+
+    if (!fromElement || !toElement) return;
+
+    if (from === to) {
+        // Обновление координат внутри того же компонента
+        const list = fromElement.getPolygons();
+        const updated = list.map(p => p.id === polygon.id ? polygon : p);
+        fromElement.setPolygons(updated);
+    } else {
+        // Перемещение между компонентами
+        const fromList = fromElement.getPolygons().filter(p => p.id !== polygon.id);
+        const toList = [...toElement.getPolygons(), polygon];
+
+        fromElement.setPolygons(fromList);
+        toElement.setPolygons(toList);
+    }
 });
+
 
 
 function generateRandomPolygons() {
@@ -68,7 +90,12 @@ function generateRandomPolygons() {
             points.push(`${x},${y}`);
         }
 
-        polygons.push({ id: `poly-${i}`, points: points.join(' ') });
+        polygons.push({
+            id: `poly-${i}`,
+            points: points.join(' '),
+            x: Math.floor(Math.random() * 300), // Добавим случайную позицию
+            y: Math.floor(Math.random() * 150)
+        });
     }
     return polygons;
 }
