@@ -77,7 +77,6 @@ class PolygonBuffer extends HTMLElement {
       width: 120px;
       height: 100px;
       cursor: grab;
-      border: 1px solid #ccc;
       box-sizing: border-box;
     }
 
