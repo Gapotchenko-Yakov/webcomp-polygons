@@ -225,11 +225,15 @@ class PolygonWorkspace extends HTMLElement {
             // Перерисовываем полигоны с обновлёнными координатами
             this.setPolygons(this.polygons);
 
+            const from = e.dataTransfer.getData('from');
+            const to = this.getAttribute('data-area');
+
             this.dispatchEvent(new CustomEvent('polygon-dropped', {
                 bubbles: true,
                 composed: true,
-                detail: { polygon: poly }
+                detail: { polygon: poly, from, to }
             }));
+
         });
 
     }
