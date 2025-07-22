@@ -173,9 +173,12 @@ class PolygonWorkspace extends HTMLElement {
 
         container.addEventListener('mousedown', (e) => {
             if (e.button !== 0) return;
-            this.isDragging = true;
-            this.dragStart.x = e.clientX - this.offsetX;
-            this.dragStart.y = e.clientY - this.offsetY;
+
+            if (e.target === container) {
+                this.isDragging = true;
+                this.dragStart.x = e.clientX - this.offsetX;
+                this.dragStart.y = e.clientY - this.offsetY;
+            }
         });
 
         window.addEventListener('mouseup', () => {
