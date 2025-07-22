@@ -66,6 +66,18 @@ class PolygonWorkspace extends HTMLElement {
           stroke: var(--polygon-stroke, blue);
           stroke-width: 2;
         }
+          #grid {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* чтобы сетка не перехватывала события */
+            z-index: 1;
+            }
+        #content {
+            position: relative;
+            z-index: 2;
+            }
       </style>
       <div class="polygon-container">
         <svg id="grid"></svg>
@@ -183,8 +195,6 @@ class PolygonWorkspace extends HTMLElement {
         this.shadowRoot.addEventListener('drop', (e) => {
             e.preventDefault();
             const data = e.dataTransfer.getData('application/json');
-            const from = e.dataTransfer.getData('from');
-            const to = this.getAttribute('data-area');
             if (!data) return;
 
             const poly = JSON.parse(data);
@@ -195,12 +205,24 @@ class PolygonWorkspace extends HTMLElement {
             poly.x = x;
             poly.y = y;
 
+            // Обновляем массив: либо добавляем новый, либо заменяем существующий
+            const index = this.polygons.findIndex(p => p.id === poly.id);
+            if (index >= 0) {
+                this.polygons[index] = poly;
+            } else {
+                this.polygons.push(poly);
+            }
+
+            // Перерисовываем полигоны с обновлёнными координатами
+            this.setPolygons(this.polygons);
+
             this.dispatchEvent(new CustomEvent('polygon-dropped', {
                 bubbles: true,
                 composed: true,
-                detail: { polygon: poly, from, to }
+                detail: { polygon: poly }
             }));
         });
+
     }
 
     setPolygons(polygons) {
@@ -219,7 +241,7 @@ class PolygonWorkspace extends HTMLElement {
             wrapper.style.top = poly.y + 'px';
 
             const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-            svg.setAttribute('viewBox', '0 0 200 100');
+            svg.setAttribute('viewBox', '0 0 120 100');
 
             const polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
             polygon.setAttribute('points', poly.points);
