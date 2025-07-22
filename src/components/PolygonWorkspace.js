@@ -8,6 +8,7 @@ class PolygonWorkspace extends HTMLElement {
         this.offsetY = 0;
         this.isDragging = false;
         this.dragStart = { x: 0, y: 0 };
+        this.polygons = [];
     }
 
     connectedCallback() {
@@ -175,6 +176,33 @@ class PolygonWorkspace extends HTMLElement {
             this.updateTransform();
             this.drawScale();
         });
+
+        // Разрешаем дроп (dragover)
+        svg.addEventListener('dragover', (e) => {
+            e.preventDefault();  // обязательно
+        });
+
+        // Обработка дропа
+        svg.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const data = e.dataTransfer.getData('application/json');
+            if (!data) return;
+
+            const droppedPolygon = JSON.parse(data);
+
+            // Добавляем полигон в workspace
+            this.polygons = this.polygons || [];
+            this.polygons.push(droppedPolygon);
+
+            this.setPolygons(this.polygons);
+
+            // сгенерируем событие, чтобы буфер удалил этот полигон
+            this.dispatchEvent(new CustomEvent('polygon-dropped', {
+                detail: droppedPolygon,
+                bubbles: true,
+                composed: true
+            }));
+        });
     }
 
     updateTransform() {
@@ -183,18 +211,35 @@ class PolygonWorkspace extends HTMLElement {
     }
 
     setPolygons(polygons) {
-        // polygons - массив объектов с координатами
         const content = this.shadow.querySelector('#content');
         content.innerHTML = '';
+
+        this.polygons = polygons; // сохраняем локально
+
         polygons.forEach(poly => {
             const polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
-            polygon.setAttribute('points', poly.points.map(p => p.join(',')).join(' '));
-            polygon.setAttribute('fill', poly.fill || 'rgba(100, 100, 200, 0.5)');
-            polygon.setAttribute('stroke', poly.stroke || 'black');
-            polygon.setAttribute('stroke-width', '1');
+
+            // Координаты
+            polygon.setAttribute('points', poly.points);
+            console.log('poly.points ', poly.points)
+
+            // Стиль — можно заменить на css-переменные
+            polygon.setAttribute('fill', poly.fill || 'rgba(128,0,0,0.6)');
+            polygon.setAttribute('stroke', poly.stroke || '#800000');
+            polygon.setAttribute('stroke-width', '2');
+
+            polygon.setAttribute('draggable', 'true');  // Сделать перетаскиваемым
+            polygon.dataset.id = poly.id;                // Уникальный ID для передачи
+
+            // dragstart — передаём данные полигона
+            polygon.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('application/json', JSON.stringify(poly));
+            });
+
             content.appendChild(polygon);
         });
     }
+
 }
 
 customElements.define('polygon-workspace', PolygonWorkspace);
