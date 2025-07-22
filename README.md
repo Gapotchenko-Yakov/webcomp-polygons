@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+// SPDX-FileCopyrightText: Gapotchenko Yakov <yakov.gapotchenko@gmail.com>
+// SPDX-License-Identifier: AGPL-3.0-or-later
 ## Лицензия
 
 Основной шаблон проекта взят из [webcomp-boilerplate](https://github.com/noi-techpark/webcomp-boilerplate), лицензированного под GNU AGPL v3.

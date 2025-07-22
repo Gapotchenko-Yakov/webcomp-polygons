@@ -1,16 +1,20 @@
+// SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+// SPDX-FileCopyrightText: Gapotchenko Yakov <yakov.gapotchenko@gmail.com>
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 class TestPolygon extends HTMLElement {
-    constructor() {
-        super();
-        this.attachShadow({ mode: 'open' });
-    }
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+  }
 
-    connectedCallback() {
-        this.render();
-        this.addEventListeners();
-    }
+  connectedCallback() {
+    this.render();
+    this.addEventListeners();
+  }
 
-    render() {
-        this.shadowRoot.innerHTML = `
+  render() {
+    this.shadowRoot.innerHTML = `
       <style>
         .draggable {
           width: 200px;
@@ -53,52 +57,52 @@ class TestPolygon extends HTMLElement {
 
       <div class="dropzone">Drop here</div>
     `;
-    }
+  }
 
-    addEventListeners() {
-        const wrapper = this.shadowRoot.querySelector('.draggable');
-        const dropzone = this.shadowRoot.querySelector('.dropzone');
+  addEventListeners() {
+    const wrapper = this.shadowRoot.querySelector('.draggable');
+    const dropzone = this.shadowRoot.querySelector('.dropzone');
 
-        wrapper.addEventListener('click', () => {
-            const id = wrapper.getAttribute('data-id');
-            console.log('✅ Polygon clicked:', id);
-        });
+    wrapper.addEventListener('click', () => {
+      const id = wrapper.getAttribute('data-id');
+      console.log('✅ Polygon clicked:', id);
+    });
 
-        wrapper.addEventListener('dragstart', (e) => {
-            const id = wrapper.getAttribute('data-id');
-            console.log('✅ Drag started on polygon:', id);
-            e.dataTransfer.setData('text/plain', id);
-            e.dataTransfer.effectAllowed = 'move';
+    wrapper.addEventListener('dragstart', (e) => {
+      const id = wrapper.getAttribute('data-id');
+      console.log('✅ Drag started on polygon:', id);
+      e.dataTransfer.setData('text/plain', id);
+      e.dataTransfer.effectAllowed = 'move';
 
-            const dragIcon = document.createElement('canvas');
-            dragIcon.width = 20;
-            dragIcon.height = 20;
-            const ctx = dragIcon.getContext('2d');
-            ctx.fillStyle = 'rgba(0,0,255,0.5)';
-            ctx.beginPath();
-            ctx.moveTo(10, 0);
-            ctx.lineTo(20, 20);
-            ctx.lineTo(0, 20);
-            ctx.closePath();
-            ctx.fill();
-            e.dataTransfer.setDragImage(dragIcon, 10, 10);
-        });
+      const dragIcon = document.createElement('canvas');
+      dragIcon.width = 20;
+      dragIcon.height = 20;
+      const ctx = dragIcon.getContext('2d');
+      ctx.fillStyle = 'rgba(0,0,255,0.5)';
+      ctx.beginPath();
+      ctx.moveTo(10, 0);
+      ctx.lineTo(20, 20);
+      ctx.lineTo(0, 20);
+      ctx.closePath();
+      ctx.fill();
+      e.dataTransfer.setDragImage(dragIcon, 10, 10);
+    });
 
-        // Позволяет бросить объект
-        dropzone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = 'move';
-        });
+    // Позволяет бросить объект
+    dropzone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+    });
 
-        dropzone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            const id = e.dataTransfer.getData('text/plain');
-            console.log('✅ Dropped polygon with id:', id);
+    dropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      const id = e.dataTransfer.getData('text/plain');
+      console.log('✅ Dropped polygon with id:', id);
 
-            // Например, показать сообщение
-            dropzone.textContent = `Polygon "${id}" dropped!`;
-        });
-    }
+      // Например, показать сообщение
+      dropzone.textContent = `Polygon "${id}" dropped!`;
+    });
+  }
 }
 
 customElements.define('test-polygon', TestPolygon);

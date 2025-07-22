@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+// SPDX-FileCopyrightText: Gapotchenko Yakov <yakov.gapotchenko@gmail.com>
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 class AppControls extends HTMLElement {
     constructor() {
         super();
