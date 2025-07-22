@@ -82,20 +82,41 @@ function generateRandomPolygons() {
 
     for (let i = 0; i < count; i++) {
         const verticesCount = Math.floor(Math.random() * 6) + 3; // 3-8 вершин
-        const points = [];
 
-        for (let v = 0; v < verticesCount; v++) {
-            const x = Math.floor(Math.random() * 300) + 20;
-            const y = Math.floor(Math.random() * 150) + 20;
-            points.push(`${x},${y}`);
-        }
+        const pointsStr = generateConvexPolygon(verticesCount); // уже строка "x,y x,y x,y..."
 
         polygons.push({
             id: `poly-${i}`,
-            points: points.join(' '),
+            points: pointsStr,
             x: Math.floor(Math.random() * 300), // Добавим случайную позицию
             y: Math.floor(Math.random() * 150)
         });
     }
     return polygons;
+}
+
+function generateConvexPolygon(verticesCount = 3) {
+    const points = [];
+
+    // Генерируем случайные точки
+    for (let i = 0; i < verticesCount; i++) {
+        const x = Math.random() * 120;
+        const y = Math.random() * 100;
+        points.push({ x, y });
+    }
+
+    // Находим центр
+    const center = points.reduce((acc, p) => {
+        acc.x += p.x;
+        acc.y += p.y;
+        return acc;
+    }, { x: 0, y: 0 });
+    center.x /= points.length;
+    center.y /= points.length;
+
+    // Сортируем точки по углу относительно центра
+    points.sort((a, b) => Math.atan2(a.y - center.y, a.x - center.x) - Math.atan2(b.y - center.y, b.x - center.x));
+
+    // Возвращаем строку с точками
+    return points.map(p => `${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(' ');
 }

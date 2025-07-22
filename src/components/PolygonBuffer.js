@@ -102,7 +102,7 @@ class PolygonBuffer extends HTMLElement {
         data-id="${poly.id}"
         style="left: ${poly.x}px; top: ${poly.y}px;"
       >
-        <svg viewBox="0 0 200 100" preserveAspectRatio="xMidYMid meet">
+        <svg viewBox="0 0 120 100" preserveAspectRatio="xMidYMid meet">
           <polygon points="${poly.points}"></polygon>
         </svg>
       </div>
