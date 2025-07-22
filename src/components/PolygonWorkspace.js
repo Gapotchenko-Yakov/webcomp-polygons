@@ -102,7 +102,9 @@ class PolygonWorkspace extends HTMLElement {
 
         const width = svg.clientWidth;
         const height = svg.clientHeight;
-        const step = 50;
+
+        const baseStep = 50;
+        const step = baseStep / this.scale;
 
         const startX = -this.offsetX / this.scale;
         const startY = -this.offsetY / this.scale;
